@@ -1,6 +1,7 @@
 """Pure validation and normalization helpers for validkit."""
 
 import re
+import unicodedata
 
 # A single, linear expression: three `+` quantifiers over character classes with a
 # literal ``@`` and ``.`` as separators, and no nested quantifiers. This makes
@@ -148,7 +149,19 @@ def normalize_phone(text: str, country_code: str) -> str:
 
 
 def strip_accents(text: str) -> str:
-    raise NotImplementedError
+    """Return *text* with diacritical marks (accents, umlauts) removed.
+
+    The input is decomposed with Unicode NFD normalization, then every character
+    of the combining mark category ``Mn`` (nonspacing marks such as acute,
+    circumflex and diaeresis) is dropped, leaving the base letters behind:
+    ``München café naïve`` becomes ``Munchen cafe naive``. A character without an
+    accent is left unchanged, and a base letter that has no decomposition (such
+    as ``ß``) is kept as-is. Raises ``TypeError`` for a non-``str`` input.
+    """
+    if not isinstance(text, str):
+        raise TypeError(f"strip_accents() expects a str, got {type(text).__name__}")
+    decomposed = unicodedata.normalize("NFD", text)
+    return "".join(char for char in decomposed if unicodedata.category(char) != "Mn")
 
 
 def mask_secret(text: str, keep: int = 4) -> str:
