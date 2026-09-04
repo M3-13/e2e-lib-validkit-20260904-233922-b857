@@ -7,7 +7,12 @@
       "stack": "python",
       "kind": "cli",
       "install": [
-        ["${python}", "-m", "pip", "install", "-e", "."]
+        ["${python}", "-m", "pip", "install", "-q", "-e", "."]
+      ],
+      "start": [
+        "${python}",
+        "-c",
+        "import validkit; print(sorted(validkit.__all__))"
       ]
     }
   ]
