@@ -22,7 +22,33 @@ def is_valid_email(text: str) -> bool:
 
 
 def luhn_check(digits: str | int) -> bool:
-    raise NotImplementedError
+    """Return True if *digits* passes the Luhn checksum algorithm.
+
+    *digits* may be an ``int`` or a ``str``. A string may contain only digits,
+    optionally separated by spaces or hyphens, which are ignored. An empty or
+    otherwise non-numeric input returns ``False``. Raises ``TypeError`` for any
+    type other than ``str`` or ``int``.
+    """
+    if isinstance(digits, bool) or not isinstance(digits, (str, int)):
+        raise TypeError(f"luhn_check() expects a str or int, got {type(digits).__name__}")
+    if isinstance(digits, int):
+        if digits < 0:
+            return False
+        digits = str(digits)
+
+    cleaned = digits.replace(" ", "").replace("-", "")
+    if not cleaned or not cleaned.isdigit():
+        return False
+
+    total = 0
+    for index, char in enumerate(reversed(cleaned)):
+        value = int(char)
+        if index % 2 == 1:
+            value *= 2
+            if value > 9:
+                value -= 9
+        total += value
+    return total % 10 == 0
 
 
 def is_valid_iban(text: str) -> bool:
