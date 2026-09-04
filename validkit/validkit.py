@@ -85,14 +85,22 @@ def is_valid_iban(text: str) -> bool:
 
 
 def is_valid_isbn13(text: str) -> bool:
-    """Return True if *text* is a valid ISBN-13 number.
+    """Prüft, ob *text* eine gültige ISBN-13-Nummer ist.
 
-    Hyphens and spaces are tolerated and ignored, so both ``978-3-16-148410-0``
-    and ``9783161484100`` validate. The input must contain exactly thirteen
-    digits; the final one is the check digit, computed from the first twelve
-    with the alternating 1/3 weighting scheme. A wrong length, an invalid
-    character or a wrong check digit returns ``False``. Raises ``TypeError``
-    for a non-``str`` input.
+    Bindestriche und Leerzeichen werden zunächst entfernt, danach muss die
+    Eingabe genau 13 Ziffern enthalten; geprüft wird gegen das ReDoS-sichere
+    Muster ``^[0-9]{13}\\Z`` (eine einzige feste Zählerzahl ``{13}``, keine
+    verschachtelten Quantoren, sodass ein Fehlschlag ohne katastrophales
+    Backtracking erfolgt und ``\\Z`` im Gegensatz zu ``$`` auch ein
+    abschließendes Newline ablehnt). Anschließend wird die Prüfziffer über das
+    gewichtete 1/3-Schema verifiziert: Die ungeraden Positionen (1., 3., 5.,
+    ...) werden mit 1, die geraden Positionen (2., 4., 6., ...) mit 3
+    multipliziert; die Summe aller dreizehn Ziffern muss durch 10 teilbar
+    sein.
+
+    Ungültige Länge, ungültige Zeichen oder eine falsche Prüfziffer ergeben
+    ``False``. Für eine Eingabe, die kein ``str`` ist, wird ein ``TypeError``
+    ausgelöst; dessen Meldung enthält niemals die Eingabedaten.
     """
     if not isinstance(text, str):
         raise TypeError(f"is_valid_isbn13() expects a str, got {type(text).__name__}")
