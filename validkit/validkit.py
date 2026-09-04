@@ -165,7 +165,24 @@ def strip_accents(text: str) -> str:
 
 
 def mask_secret(text: str, keep: int = 4) -> str:
-    raise NotImplementedError
+    """Return *text* with everything but the last *keep* characters masked.
+
+    The last *keep* characters stay visible and every preceding character is
+    replaced by ``*``. A *text* whose length is less than or equal to *keep* is
+    masked completely, so ``mask_secret("geheim123", keep=4)`` returns
+    ``"*****m123"``. *keep* must be a non-negative ``int``; a negative *keep*
+    raises ``ValueError``, a non-``int`` *keep* (or non-``str`` *text*) raises
+    ``TypeError``. Error messages never contain the input values.
+    """
+    if not isinstance(text, str):
+        raise TypeError(f"mask_secret() expects a str, got {type(text).__name__}")
+    if isinstance(keep, bool) or not isinstance(keep, int):
+        raise TypeError(f"mask_secret() expects an int for keep, got {type(keep).__name__}")
+    if keep < 0:
+        raise ValueError("mask_secret() keep must be a non-negative integer")
+
+    visible = keep if len(text) > keep else 0
+    return "*" * (len(text) - visible) + text[len(text) - visible :]
 
 
 def slugify(text: str) -> str:
