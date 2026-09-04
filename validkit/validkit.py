@@ -211,4 +211,18 @@ def slugify(text: str) -> str:
 
 
 def clamp(value: float | int, low: float | int, high: float | int) -> float | int:
-    raise NotImplementedError
+    """Bound *value* to the inclusive interval ``[low, high]``.
+
+    The result is *value* itself when it already lies between *low* and *high*,
+    *low* when it falls below, and *high* when it exceeds the interval. An all-``int``
+    input yields an ``int`` and any ``float`` input yields a ``float``. *low* must not
+    be greater than *high*; any non-numeric argument (``str``, ``bool``, ``None``)
+    raises ``TypeError`` and ``low > high`` raises ``ValueError``. Error messages
+    never contain the input values.
+    """
+    for name, arg in (("value", value), ("low", low), ("high", high)):
+        if isinstance(arg, bool) or not isinstance(arg, (int, float)):
+            raise TypeError(f"clamp() expects {name} to be a number, got {type(arg).__name__}")
+    if low > high:
+        raise ValueError("clamp() requires low <= high")
+    return max(low, min(value, high))
