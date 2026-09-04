@@ -39,9 +39,14 @@ class TestMaskSecret:
     def test_keep_zero_on_empty_text(self) -> None:
         assert mask_secret("", 0) == ""
 
-    @pytest.mark.parametrize("keep", [-1, -4, 1.5, 4.0])
-    def test_negative_or_non_integer_keep_raises_value_error(self, keep: object) -> None:
+    @pytest.mark.parametrize("keep", [-1, -4])
+    def test_negative_keep_raises_value_error(self, keep: int) -> None:
         with pytest.raises(ValueError):
+            mask_secret("geheim123", keep)
+
+    @pytest.mark.parametrize("keep", [1.5, 4.0, None, "4"])
+    def test_non_integer_keep_raises_type_error(self, keep: object) -> None:
+        with pytest.raises(TypeError):
             mask_secret("geheim123", keep)  # type: ignore[arg-type]
 
     @pytest.mark.parametrize("text", [None, 12345, 3.14, ["geheim123"], b"geheim123"])
