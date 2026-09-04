@@ -81,6 +81,8 @@ class TestLuhnCheck:
         "digits",
         [
             None,
+            True,
+            False,
             3.14,
             ["79927398713"],
             {"n": 79927398713},
