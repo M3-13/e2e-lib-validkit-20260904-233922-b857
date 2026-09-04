@@ -43,8 +43,10 @@ class TestIsValidIban:
         [
             "",  # empty
             "   ",  # whitespace only
-            "DE89 3704 0044 0532 0130",  # too short
-            "DE89 3704 0044 0532 0130 001",  # too long
+            "DE89 3704 0044 0532 0130",  # truncated (missing the two check digits)
+            "DE89 3704 0044 0532 0130 001",  # extra trailing digit
+            "DE89 3704 0044 0",  # too short (13 chars, below the 15-char minimum)
+            "DE89 3704 0044 0532 0130 0000 0000 0000 0000",  # too long (36 chars, above 34)
             "DE89 3704 0044 0532 0130 0O",  # letter O instead of digit 0
             "DE89 3704 0044 0532 0130 0!",  # invalid punctuation
             "de89 3704 0044 0532 0130 00",  # lower-case country code
