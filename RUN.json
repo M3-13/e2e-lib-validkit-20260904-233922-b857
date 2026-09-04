@@ -12,7 +12,7 @@
       "start": [
         "${python}",
         "-c",
-        "import validkit; print(sorted(validkit.__all__)); assert validkit.is_valid_email('alice@example.com') is True; assert validkit.is_valid_email('') is False; assert validkit.is_valid_email('alice@') is False; assert validkit.is_valid_email('@example.com') is False; assert validkit.is_valid_email('aliceexample.com') is False; print('validkit ok')"
+        "import validkit; print(sorted(validkit.__all__)); assert validkit.is_valid_email('alice@example.com') is True; assert validkit.is_valid_email('') is False; assert validkit.is_valid_email('alice@') is False; assert validkit.is_valid_email('@example.com') is False; assert validkit.is_valid_email('aliceexample.com') is False; assert validkit.is_valid_iban('DE89370400440532013000') is True; assert validkit.is_valid_iban('DE89370400440532013001') is False; assert validkit.luhn_check('79927398713') is True; assert validkit.luhn_check('79927398712') is False; print('validkit ok')"
       ]
     }
   ]
