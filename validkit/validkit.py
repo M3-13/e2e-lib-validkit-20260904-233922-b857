@@ -185,8 +185,29 @@ def mask_secret(text: str, keep: int = 4) -> str:
     return "*" * (len(text) - visible) + text[len(text) - visible :]
 
 
+# A single linear expression: one `+` quantifier over a negated character
+# class with no nested quantifiers. Backtracking is O(n) at worst, so no
+# catastrophic ReDoS is possible.
+_SLUG_RE = re.compile(r"[^a-z0-9]+")
+
+
 def slugify(text: str) -> str:
-    raise NotImplementedError
+    """Return a URL-safe slug for *text*.
+
+    The input is lowercased, diacritical marks are removed (``Héllo`` becomes
+    ``hello``), and every run of characters that is not an ASCII letter or digit
+    is replaced by a single hyphen. Repeated hyphens are collapsed and leading
+    and trailing hyphens are stripped, so ``"Héllo Wörld! -- Foo_ Bar"`` becomes
+    ``"hello-world-foo-bar"``. An input made only of non-alphanumeric characters
+    yields ``""``. Raises ``TypeError`` for a non-``str`` input.
+    """
+    if not isinstance(text, str):
+        raise TypeError(f"slugify() expects a str, got {type(text).__name__}")
+    decomposed = unicodedata.normalize("NFD", text)
+    ascii_text = "".join(char for char in decomposed if unicodedata.category(char) != "Mn")
+    lower = ascii_text.lower()
+    replaced = _SLUG_RE.sub("-", lower)
+    return replaced.strip("-")
 
 
 def clamp(value: float | int, low: float | int, high: float | int) -> float | int:
